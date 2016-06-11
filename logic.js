@@ -1,4 +1,5 @@
-var trainData = new Firebase("https://train-scheduleweek7.firebaseio.com/")
+var trainData = new Firebase("https://train-scheduleweek7.firebaseio.com/");
+var dataRef = newFirebase(url);
 
 var newTrain ={
 	name: trainName,
@@ -62,10 +63,33 @@ trainData.on("child_added", function(childSnapshot, prevChildKey){
 	console.log(freq);
 
 	//format train time
-	var trainTImeFormat = moment.unix(trainTime).format("HH:mm");
+	var trainTimeFormat = moment.unix(trainTime).format("HH:mm");
 
 	//next train calculation
-
+	
+	// train time pushed back a year
+	var trainTimeConverted = moment(trainTime,"HH:mm").subtract(1, "years");
+	console.log(trainTimeConverted);
+	
+	// Current Time
+	var currentTime = moment();
+	console.log("CURRENT TIME: " + moment(currentTime).format("HH:mm"));
+	
+	// Difference between the times
+	var diffTime = moment().diff(moment(trainTimeConverted), "minutes");
+	console.log("DIFFERENCE IN TIME: " + diffTime);
+	
+	// Time apart (remainder)
+	var tRemainder = diffTime % freq;
+	console.log(tRemainder);
+	
+	// Minutes Until Train
+	var tMinutesTillTrain = freq - tRemainder;
+	console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+	
+	// Next Train
+	var nextTrain = moment().add(tMinutesTillTrain, "minutes")
+	console.log("ARRIVAL TIME: " + moment(nextTrain).format("HH:mm"))
 
 	//add train data to table
 	$("#trainTable > tbody").append("<tr><td>" +trainName + "</td><td>" + dest + "</td><td>" + trainTime + "</td><td>" + freq + "</td></tr>");
